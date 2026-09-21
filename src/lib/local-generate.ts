@@ -70,9 +70,7 @@ function trap(
 ) {
   const d = amt(rng, 3, 27);
   return stripQcFromStem(
-    ` Tờ trình của giám đốc tài chính gửi ủy ban kiểm toán lập luận rằng cách xử lý hiện tại phản ánh đúng nhu cầu người sử dụng vì ${motiveA}, và rằng ${motiveB} cũng ủng hộ cách ghi nhận/trình bày này. ` +
-      `Chi tiết nhiễu: ${herring} Ban quản trị trích dẫn việc đó như “tiền lệ” hoặc “bằng chứng chính sách đã minh bạch.” ` +
-      `Email nội bộ ngày ${String(d).padStart(2, "0")}/12: “${email}”`,
+    `Tờ trình của giám đốc tài chính gửi ủy ban kiểm toán cho rằng cách xử lý hiện tại phù hợp với nhu cầu của người sử dụng vì ${motiveA}. Tờ trình cũng nêu rằng ${motiveB} là một lý do để giữ nguyên cách ghi nhận hoặc trình bày. Chi tiết gây nhiễu: ${herring} Ban quản trị viện dẫn chi tiết này như một “tiền lệ” hoặc “bằng chứng cho chính sách nhất quán”. Email nội bộ ngày ${String(d).padStart(2, "0")}/12 viết: “${email}”`,
   );
 }
 

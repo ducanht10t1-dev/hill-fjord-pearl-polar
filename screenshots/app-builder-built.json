@@ -1,0 +1,38 @@
+{
+  "url": "http://127.0.0.1:8081/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "Đức Anh",
+      "hasCanvas": false,
+      "bodyTextLen": 1308,
+      "bodyTextHash": "ace988f9a8bf04e94b9c46fc49f8d7d3260b110aea6bf919e7a2cad3afa00a26",
+      "bodyTextPrefix": "Đức Anh CF 2018 · IFRS 18 Trắc nghiệm Thi 30 câu Ngân hàng ML86 ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "Đức Anh",
+      "hasCanvas": false,
+      "bodyTextLen": 1290,
+      "bodyTextHash": "915f13358414ff37dd911e2eb8e78a66bdfd982ef0eba00013bf88f927fd5d3a",
+      "bodyTextPrefix": "Đức Anh Trắc nghiệm Thi 30 câu Ngân hàng ML86 · KHUNG KHÁI NIỆM ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-built-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-built.json",
+  "divergesFromBaseline": false,
+  "baselineReasons": []
+}

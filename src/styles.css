@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f3eee4;
+  --color-bg-elevated: #faf7f0;
+  --color-surface: #fffdf8;
+  --color-ink: #1a1916;
+  --color-muted: #6b655c;
+  --color-subtle: #8a8378;
+  --color-line: #e2d8c8;
+  --color-navy: #2a3546;
+  --color-navy-fg: #f3eee4;
+  --color-accent: #2a3546;
+  --color-ok: #2f5d45;
+  --color-ok-bg: #e4efe8;
+  --color-warn: #8b3a2a;
+  --color-warn-bg: #f6e6e1;
+  --color-primary: #2a3546;
+  --color-primary-foreground: #f3eee4;
+  --color-foreground: #1a1916;
+  --color-background: #f3eee4;
+  --color-card: #fffdf8;
+  --color-border: #e2d8c8;
+  --color-ring: #2a3546;
+
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-sans: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius: 0.75rem;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  html,
+  body,
+  #app {
+    min-height: 100%;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.03em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workflow Lab — Đặc tính thông tin tài chính hữu ích</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <script src="qc-lab-data.js"></script>
+  <style>
+    :root {
+      --ink:#1b1a17; --muted:#5c574e; --paper:#f6f1e6; --card:#fffdf7;
+      --gold:#c45c26; --navy:#1e3a5f; --navy-2:#2c5282; --line:#e4d9c5;
+      --ok:#2f6f4e; --ok-bg:#e5f3ea; --warn:#8a3b12; --chip:#efe6d6; --step:#dbe7f3;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,sans-serif}
+    header.app{background:linear-gradient(160deg,#1e3a5f 0%,#16324f 70%);color:#f8f1e4;padding:22px 24px 16px;border-bottom:6px solid var(--gold)}
+    header.app h1{font-size:20px;margin:0 0 6px}
+    header.app p{margin:0;color:#d7cbb8;font-size:13px;max-width:980px;line-height:1.5}
+    .sub{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+    .pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:4px 10px;border-radius:999px;font-size:11px}
+    .wrap{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 118px)}
+    aside{border-right:1px solid var(--line);background:#f3ead9;padding:14px 12px 28px;overflow:auto;max-height:calc(100vh - 118px);position:sticky;top:0}
+    .tools{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+    input[type="search"],select,button.mode{font:inherit;font-size:12.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#fff}
+    button.mode{cursor:pointer;background:var(--navy);color:#fff;border:0;font-weight:600}
+    button.mode.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+    .progress{font-size:12px;color:var(--muted);margin:4px 2px 10px}
+    .bar{height:6px;background:#e0d3bc;border-radius:99px;overflow:hidden}
+    .bar>i{display:block;height:100%;background:var(--gold);width:0}
+    .sess{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:8px}
+    .sess h4{margin:0 0 6px;font-size:12px;color:var(--navy)}
+    .sess button{font:inherit;font-size:11px;margin:2px 3px 0 0;padding:3px 7px;border-radius:999px;border:1px solid var(--line);background:#f7f0e3;cursor:pointer}
+    .sess button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .caselist{display:flex;flex-direction:column;gap:5px}
+    .citem{text-align:left;width:100%;border:1px solid transparent;background:transparent;padding:7px 8px;border-radius:8px;cursor:pointer;font:inherit;color:inherit}
+    .citem:hover{background:#efe4cf}
+    .citem.active{background:#fff;border-color:var(--gold)}
+    .citem .num{color:var(--gold);font-weight:700;font-size:11px}
+    .citem .t{display:block;font-size:12.5px;font-weight:600;line-height:1.3}
+    .citem .meta{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+    .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#c8bda8;margin-right:4px}
+    .dot.done{background:var(--ok)}
+    .dot.wrote{background:#c45c26}
+    main{padding:18px 24px 72px;max-width:1040px}
+    .slide{background:var(--card);border:1px solid var(--line);border-radius:4px;box-shadow:0 10px 30px rgba(80,50,20,.06);overflow:hidden}
+    .slide-hd{background:linear-gradient(#f4c98a,#f0d7a8);padding:14px 20px 10px;border-bottom:1px solid #e8c48a}
+    .slide-hd .kicker{color:var(--navy);font-weight:700;font-size:12.5px}
+    .slide-hd h2{margin:4px 0 0;color:#9a3412;font-size:19px}
+    .slide-bd{padding:16px 20px 22px}
+    .stepper{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+    .stepper button{font:inherit;font-size:11.5px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer}
+    .stepper button.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .stepper button.ok{border-color:var(--ok);color:var(--ok)}
+    .char-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+    .chip{background:var(--chip);color:var(--navy);font-size:11px;padding:3px 8px;border-radius:999px;font-weight:600}
+    .chip.hot{background:#9a3412;color:#fff}
+    .chip.diff{background:var(--navy);color:#fff}
+    .co{font-weight:600;color:var(--navy-2);margin-bottom:8px;font-size:13.5px}
+    .scenario{font-family:"Source Serif 4",Georgia,serif;font-size:15.5px;line-height:1.55;white-space:pre-wrap;border-left:3px solid var(--gold);padding:8px 14px;margin:0 0 14px;background:#fff}
+    h3.sec{font-size:14px;color:#9a3412;margin:16px 0 8px}
+    ol.qs{margin:0;padding-left:20px}
+    ol.qs li{margin:6px 0;line-height:1.45;font-size:14px}
+    textarea.wf{width:100%;min-height:88px;font:inherit;font-size:13.5px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;resize:vertical}
+    .hint{font-size:12.5px;color:var(--muted);margin:0 0 8px;line-height:1.45}
+    .quiz-box{background:#f7f0e3;border:1px dashed #d9c7a6;padding:12px 14px;border-radius:8px}
+    .quiz-box label{display:block;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:13.5px}
+    .quiz-box label:hover{background:#efe4cf}
+    .actions,.navbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .navbtns{justify-content:space-between}
+    .btn{font:inherit;font-size:13px;font-weight:600;border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+    .btn.pri{background:var(--gold);color:#fff}
+    .btn.sec{background:var(--navy);color:#fff}
+    .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+    .answer{display:none;margin-top:14px;background:var(--ok-bg);border:1px solid #b7d7c3;padding:14px 16px;border-radius:8px;white-space:pre-wrap;font-size:13.5px;line-height:1.55}
+    .answer.show{display:block}
+    .feedback{margin-top:10px;font-size:13.5px;font-weight:600}
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--warn)}
+    .board{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .board .box{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:12.5px}
+    .board h4{margin:0 0 6px;font-size:12px;color:var(--navy);text-transform:uppercase;letter-spacing:.04em}
+    .board ol{margin:0;padding-left:18px}
+    footer.note{margin-top:16px;color:var(--muted);font-size:12px;line-height:1.5}
+    @media(max-width:960px){.wrap{grid-template-columns:1fr}.board{grid-template-columns:1fr}aside{position:relative;max-height:none}}
+  </style>
+</head>
+<body>
+<header class="app">
+  <h1>Workflow làm case — Đặc tính thông tin tài chính hữu ích</h1>
+  <p>Luồng chuẩn 5 bước theo CF.2.21 / CF.2.37. Không nhảy thẳng vào “liệt kê mọi QC”. Chọn buổi → mở case → viết khung → chọn QC quyết định → đối chiếu đáp án.</p>
+  <div class="sub">
+    <span class="pill">Bước 1 Hiện tượng</span>
+    <span class="pill">Bước 2 Relevance</span>
+    <span class="pill">Bước 3 Faithful representation</span>
+    <span class="pill">Bước 4 Enhancing + cost</span>
+    <span class="pill">Bước 5 QC quyết định</span>
+  </div>
+</header>
+<div class="wrap">
+  <aside>
+    <div class="tools">
+      <input id="q" type="search" placeholder="Tìm case, công ty, QC…" />
+      <select id="filter">
+        <option value="all">Tất cả case</option>
+        <option value="s1">Buổi 1 · Relevance / Materiality</option>
+        <option value="s2">Buổi 2 · Faithful representation</option>
+        <option value="s3">Buổi 3 · Neutrality / Prudence</option>
+        <option value="s4">Buổi 4 · Enhancing</option>
+        <option value="s5">Buổi 5 · Trade-off & bẫy</option>
+        <option value="s6">Buổi 6 · Đề tổng hợp</option>
+        <option value="trap">Chỉ case bẫy</option>
+      </select>
+      <button class="mode" id="modeBtn">Chế độ: Workflow</button>
+      <button class="mode ghost" id="resetBtn">Xóa tiến độ + bài làm</button>
+    </div>
+    <div class="progress"><span id="progText">0/30 đã xem · 0 đã viết</span>
+      <div class="bar"><i id="progBar"></i></div>
+    </div>
+    <div class="sess" id="sessBox"></div>
+    <div class="caselist" id="list"></div>
+  </aside>
+  <main>
+    <div class="board" id="homeMap">
+      <div class="box">
+        <h4>Workflow 5 bước / 1 case</h4>
+        <ol>
+          <li>Tách legal form khỏi economic substance.</li>
+          <li>Relevance: predictive / confirmatory / materiality (nature hoặc magnitude).</li>
+          <li>FR: complete – neutral (prudence) – free from error.</li>
+          <li>Enhancing có giúp không? Cost có phải lý do thật không?</li>
+          <li>Chỉ ra <em>một</em> QC quyết định. QC khác là hệ quả.</li>
+        </ol>
+      </div>
+      <div class="box">
+        <h4>Lộ trình 6 buổi</h4>
+        <ol>
+          <li>3, 4, 20, 24 — relevance không phụ thuộc ghi nhận</li>
+          <li>1, 5, 6, 12, 29 — substance / completeness / error</li>
+          <li>2, 7, 17, 19 — prudence ≠ bi quan</li>
+          <li>8, 9, 10, 11, 14 — enhancing không cứu FR sai</li>
+          <li>13, 22, 25, 26, 27 — trade-off & presentation</li>
+          <li>15, 16, 18, 21, 23, 28, 30 — thi thử hỗn hợp</li>
+        </ol>
+      </div>
+    </div>
+    <article class="slide" id="panel"></article>
+    <footer class="note">
+      CF.2.20: thông tin phải vừa relevant vừa faithful. CF.2.18: ước tính sai so với thực tế sau này chưa chắc là error.
+      CF.2.16–2.17: prudence không cho overstate nợ. CF.2.11: không có ngưỡng % materiality thống nhất. CF.2.37: enhancing không biến thông tin sai thành useful.
+    </footer>
+  </main>
+</div>
+<script>
+const CASES = window.QC_CASES || [];
+const SESSIONS = {
+  s1: {title:"Buổi 1 · Relevance / Materiality", ids:[3,4,20,24]},
+  s2: {title:"Buổi 2 · Faithful representation", ids:[1,5,6,12,29]},
+  s3: {title:"Buổi 3 · Neutrality / Prudence", ids:[2,7,17,19]},
+  s4: {title:"Buổi 4 · Enhancing", ids:[8,9,10,11,14]},
+  s5: {title:"Buổi 5 · Trade-off & bẫy", ids:[13,22,25,26,27]},
+  s6: {title:"Buổi 6 · Đề tổng hợp", ids:[15,16,18,21,23,28,30]}
+};
+const STEPS = [
+  {id:"p", label:"1. Hiện tượng", prompt:"Hiện tượng kinh tế đang được mô tả là gì? Legal form và economic substance có trùng nhau không?", hint:"Viết 2–4 câu. Đừng dùng tên QC trước khi mô tả được giao dịch."},
+  {id:"r", label:"2. Relevance", prompt:"Thông tin này có predictive value, confirmatory value, materiality (nature/magnitude) không? Relevance có phụ thuộc việc đã ghi nhận không?", hint:"CF.2.6–2.11. Im lặng / obscuring cũng nằm trong materiality."},
+  {id:"f", label:"3. Faithful representation", prompt:"Depiction có complete, neutral (prudence đúng nghĩa), free from error không? Ước tính khác kết quả sau này có phải error không?", hint:"CF.2.12–2.19. Prudence không phải chọn mút biên bi quan."},
+  {id:"e", label:"4. Enhancing + cost", prompt:"Comparability / verifiability / timeliness / understandability có bị giảm không? Cost constraint có phải lý do thật không?", hint:"CF.2.23–2.43. Enhancing không cứu thông tin unfaithful."},
+  {id:"d", label:"5. QC quyết định", prompt:"QC quyết định là gì? QC nào chỉ là hệ quả / nhiễu? Ban quản trị nên ghi nhận / thuyết minh thế nào?", hint:"Một QC dẫn dắt lập luận. Liệt kê cả chùm QC là trả lời yếu."}
+];
+const seenKey="qc-lab-seen-v1", workKey="qc-lab-work-v1", gradeKey="qc-lab-grade-v1";
+let mode="workflow", currentId=CASES[0]?CASES[0].id:1, stepIdx=0;
+const $ = s => document.querySelector(s);
+const seen = () => JSON.parse(localStorage.getItem(seenKey)||"[]");
+const work = () => JSON.parse(localStorage.getItem(workKey)||"{}");
+const grade = () => JSON.parse(localStorage.getItem(gradeKey)||"{}");
+function markSeen(id){const s=new Set(seen());s.add(id);localStorage.setItem(seenKey,JSON.stringify([...s]));}
+function saveWork(id, field, val){const w=work();w[id]=w[id]||{};w[id][field]=val;localStorage.setItem(workKey,JSON.stringify(w));}
+function hasWriting(id){const w=work()[id]||{};return STEPS.some(st => (w[st.id]||"").trim().length>12);}
+function updateProgress(){
+  const n=seen().length, w=Object.keys(work()).filter(k=>hasWriting(+k)).length;
+  $("#progText").textContent = n+"/30 đã mở · "+w+" đã viết theo workflow";
+  $("#progBar").style.width = (w/30*100)+"%";
+}
+function sessionOf(id){return Object.keys(SESSIONS).find(k=>SESSIONS[k].ids.includes(id));}
+function matchesFilter(c,f,q){
+  const blob=(c.title+" "+c.company+" "+c.primary+" "+(c.secondary||[]).join(" ")+" "+(c.tags||[]).join(" ")).toLowerCase();
+  if(q && !blob.includes(q.toLowerCase())) return false;
+  if(f==="all") return true;
+  if(SESSIONS[f]) return SESSIONS[f].ids.includes(c.id);
+  if(f==="trap") return (c.tags||[]).includes("trap");
+  return blob.includes(f);
+}
+function renderSessions(){
+  $("#sessBox").innerHTML = "<h4>Lộ trình</h4>"+Object.entries(SESSIONS).map(([k,v])=>{
+    const done=v.ids.filter(id=>hasWriting(id)).length;
+    return `<div style="margin-bottom:4px"><strong style="font-size:11px">${v.title}</strong>
+      <div>${v.ids.map(id=>`<button data-sid="${id}" class="${id===currentId?"on":""}">${id}${hasWriting(id)?" ✓":""}</button>`).join("")}
+      <span style="font-size:10px;color:#5c574e">${done}/${v.ids.length}</span></div></div>`;
+  }).join("");
+  $("#sessBox").querySelectorAll("button[data-sid]").forEach(b=>{
+    b.onclick=()=>{currentId=+b.dataset.sid;stepIdx=0;$("#filter").value=sessionOf(currentId)||"all";renderAll();};
+  });
+}
+function renderList(){
+  const f=$("#filter").value, q=$("#q").value.trim(), s=new Set(seen());
+  const rows=CASES.filter(c=>matchesFilter(c,f,q));
+  $("#list").innerHTML = rows.map(c=>`
+    <button class="citem ${c.id===currentId?"active":""}" data-id="${c.id}">
+      <span class="num"><span class="dot ${hasWriting(c.id)?"wrote":s.has(c.id)?"done":""}"></span>Case ${String(c.id).padStart(2,"0")}</span>
+      <span class="t">${c.title}</span>
+      <span class="meta">${c.company} · ${c.difficulty}</span>
+    </button>`).join("") || "<p style='font-size:12px;color:#5c574e;padding:8px'>Không khớp bộ lọc.</p>";
+  $("#list").querySelectorAll(".citem").forEach(btn=>{
+    btn.onclick=()=>{currentId=+btn.dataset.id;stepIdx=0;renderAll();};
+  });
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function nextInPath(dir){
+  const f=$("#filter").value;
+  const pool = SESSIONS[f] ? SESSIONS[f].ids : CASES.map(c=>c.id);
+  const i=pool.indexOf(currentId);
+  const n=i+dir;
+  if(n>=0 && n<pool.length) currentId=pool[n];
+  else {
+    const j=CASES.findIndex(c=>c.id===currentId)+dir;
+    if(j>=0 && j<CASES.length) currentId=CASES[j].id;
+  }
+  stepIdx=0; renderAll();
+}
+function renderCase(){
+  const c=CASES.find(x=>x.id===currentId); if(!c) return;
+  markSeen(c.id);
+  const w=work()[c.id]||{};
+  const g=grade()[c.id];
+  const idx=CASES.findIndex(x=>x.id===c.id);
+  const opts=shuffle([c.primary,...(c.distractors||[])].slice(0,5));
+
+  if(mode==="study"){
+    $("#panel").innerHTML = header(c)+`
+      <div class="slide-bd">
+        ${chips(c,true)}
+        <div class="co">${c.company}</div>
+        <div class="scenario">${c.scenario}</div>
+        <h3 class="sec">Discussion questions</h3>
+        <ol class="qs">${c.questions.map(q=>`<li>${q}</li>`).join("")}</ol>
+        <div class="actions">
+          <button class="btn pri" id="reveal">Hiện đáp án gợi ý</button>
+          <button class="btn ghost" id="copy">Sao chép case</button>
+        </div>
+        <div class="answer" id="ans">${ansHtml(c)}</div>
+        ${nav(idx)}
+      </div>`;
+    bindCommon(c,idx); return;
+  }
+
+  if(mode==="quiz"){
+    $("#panel").innerHTML = header(c)+`
+      <div class="slide-bd">
+        <h3 class="sec">Quiz — QC quyết định?</h3>
+        <div class="quiz-box">${opts.map(o=>`<label><input type="radio" name="qc" value="${esc(o)}"> ${o}</label>`).join("")}</div>
+        <p class="feedback" id="fb"></p>
+        <div class="co">${c.company}</div>
+        <div class="scenario">${c.scenario}</div>
+        <ol class="qs">${c.questions.map(q=>`<li>${q}</li>`).join("")}</ol>
+        <div class="actions">
+          <button class="btn sec" id="check">Kiểm tra</button>
+          <button class="btn pri" id="reveal">Hiện đáp án</button>
+        </div>
+        <div class="answer" id="ans">${ansHtml(c)}</div>
+        ${nav(idx)}
+      </div>`;
+    bindCommon(c,idx);
+    $("#check").onclick=()=>{
+      const sel=document.querySelector("input[name=qc]:checked"); const fb=$("#fb");
+      if(!sel){fb.className="feedback bad";fb.textContent="Chọn một phương án.";return;}
+      const ok=sel.value===c.primary;
+      const gg=grade(); gg[c.id]=ok?"ok":"bad"; localStorage.setItem(gradeKey,JSON.stringify(gg));
+      fb.className="feedback "+(ok?"ok":"bad");
+      fb.textContent=ok?("Đúng hướng: "+c.primary):("Chưa phải QC quyết định. Bạn chọn: “"+sel.value+"”.");
+      if(ok) $("#ans").classList.add("show");
+    };
+    return;
+  }
+
+  // workflow
+  const st=STEPS[stepIdx];
+  const written=STEPS.filter(s=>(w[s.id]||"").trim().length>12).length;
+  $("#panel").innerHTML = header(c)+`
+    <div class="slide-bd">
+      <div class="stepper">
+        ${STEPS.map((s,i)=>`<button data-step="${i}" class="${i===stepIdx?"active":""} ${(w[s.id]||"").trim().length>12?"ok":""}">${s.label}</button>`).join("")}
+      </div>
+      <div class="char-row">
+        <span class="chip diff">${c.difficulty}</span>
+        <span class="chip">${SESSIONS[sessionOf(c.id)]?SESSIONS[sessionOf(c.id)].title:""}</span>
+        <span class="chip">${written}/5 bước đã viết</span>
+        ${g==="ok"?`<span class="chip" style="background:#2f6f4e;color:#fff">QC đúng</span>`:g==="bad"?`<span class="chip hot">QC chưa đúng</span>`:""}
+      </div>
+      <div class="co">${c.company}</div>
+      <div class="scenario">${c.scenario}</div>
+      <h3 class="sec">Câu hỏi sẵn của đề</h3>
+      <ol class="qs">${c.questions.map(q=>`<li>${q}</li>`).join("")}</ol>
+      <h3 class="sec">${st.label}</h3>
+      <p class="hint">${st.hint}</p>
+      <p class="hint"><strong>${st.prompt}</strong></p>
+      <textarea class="wf" id="wfBox" placeholder="Viết lập luận của bạn...">${w[st.id]||""}</textarea>
+      ${stepIdx===4?`
+        <h3 class="sec">Chọn QC quyết định trước khi đối chiếu</h3>
+        <div class="quiz-box">${opts.map(o=>`<label><input type="radio" name="qc" value="${esc(o)}" ${w.pick===o?"checked":""}> ${o}</label>`).join("")}</div>
+        <p class="feedback" id="fb"></p>
+      `:""}
+      <div class="actions">
+        <button class="btn ghost" id="prevStep" ${stepIdx===0?"disabled":""}>← Bước trước</button>
+        <button class="btn sec" id="saveStep">Lưu bước này</button>
+        <button class="btn pri" id="nextStep">${stepIdx===4?"Chấm QC + hiện đáp án":"Lưu & bước sau →"}</button>
+        <button class="btn ghost" id="copy">Copy case</button>
+      </div>
+      <div class="answer" id="ans">${ansHtml(c)}</div>
+      ${nav(idx)}
+    </div>`;
+  bindCommon(c,idx);
+  $("#panel").querySelectorAll("[data-step]").forEach(b=>b.onclick=()=>{persistStep(c);stepIdx=+b.dataset.step;renderCase();});
+  $("#prevStep").onclick=()=>{persistStep(c);stepIdx=Math.max(0,stepIdx-1);renderCase();};
+  $("#saveStep").onclick=()=>{persistStep(c);updateProgress();renderSessions();renderList();};
+  $("#nextStep").onclick=()=>{
+    persistStep(c);
+    if(stepIdx<4){stepIdx++;renderCase();return;}
+    const sel=document.querySelector("input[name=qc]:checked");
+    const fb=$("#fb");
+    if(!sel){fb.className="feedback bad";fb.textContent="Chọn QC quyết định trước.";return;}
+    saveWork(c.id,"pick",sel.value);
+    const ok=sel.value===c.primary;
+    const gg=grade(); gg[c.id]=ok?"ok":"bad"; localStorage.setItem(gradeKey,JSON.stringify(gg));
+    fb.className="feedback "+(ok?"ok":"bad");
+    fb.textContent=ok?("QC quyết định khớp gợi ý: "+c.primary):("Gợi ý QC quyết định là: "+c.primary+" — đối chiếu xem bạn đang chọn hệ quả.");
+    $("#ans").classList.add("show");
+    updateProgress(); renderSessions(); renderList();
+  };
+}
+function persistStep(c){
+  const box=$("#wfBox"); if(box) saveWork(c.id, STEPS[stepIdx].id, box.value);
+  const sel=document.querySelector("input[name=qc]:checked"); if(sel) saveWork(c.id,"pick",sel.value);
+}
+function header(c){return `<div class="slide-hd"><div class="kicker">WORKFLOW · Case ${String(c.id).padStart(2,"0")}/30 · CF 2018 Ch.2</div><h2>${c.title}</h2></div>`;}
+function chips(c,showP){return `<div class="char-row">${showP?`<span class="chip hot">QC quyết định</span><span class="chip">${c.primary}</span>`:""}<span class="chip diff">${c.difficulty}</span>${(c.secondary||[]).map(s=>`<span class="chip">cũng chạm: ${s}</span>`).join("")}</div>`;}
+function ansHtml(c){return `<strong>Gợi ý trả lời</strong>\n\n${c.answer}`;}
+function nav(idx){return `<div class="navbtns"><button class="btn ghost" id="prev">← Case trước</button><button class="btn ghost" id="next">Case sau →</button></div>`;}
+function esc(s){return String(s).replace(/"/g,"&quot;");}
+function bindCommon(c,idx){
+  const rev=$("#reveal"); if(rev) rev.onclick=()=>$("#ans").classList.toggle("show");
+  const cp=$("#copy"); if(cp) cp.onclick=()=>{
+    const text=`Case ${c.id}. ${c.title}\n${c.company}\n\n${c.scenario}\n\nQuestions:\n${c.questions.map((q,i)=>(i+1)+". "+q).join("\n")}`;
+    navigator.clipboard.writeText(text);
+  };
+  $("#prev").onclick=()=>nextInPath(-1);
+  $("#next").onclick=()=>nextInPath(1);
+}
+function renderAll(){renderSessions();renderList();renderCase();updateProgress();}
+$("#q").oninput=renderList;
+$("#filter").onchange=()=>{
+  const f=$("#filter").value;
+  if(SESSIONS[f] && !SESSIONS[f].ids.includes(currentId)) currentId=SESSIONS[f].ids[0];
+  stepIdx=0; renderAll();
+};
+$("#modeBtn").onclick=()=>{
+  mode = mode==="workflow"?"quiz":mode==="quiz"?"study":"workflow";
+  $("#modeBtn").textContent="Chế độ: "+(mode==="workflow"?"Workflow":mode==="quiz"?"Quiz":"Study");
+  renderCase();
+};
+$("#resetBtn").onclick=()=>{
+  if(!confirm("Xóa tiến độ xem, bài viết 5 bước và kết quả chấm QC?")) return;
+  localStorage.removeItem(seenKey); localStorage.removeItem(workKey); localStorage.removeItem(gradeKey);
+  renderAll();
+};
+renderAll();
+</script>
+</body>
+</html>

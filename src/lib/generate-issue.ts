@@ -92,15 +92,19 @@ export const generateRandomIssue = createServerFn({ method: "POST" })
     if (!apiKey) return { ok: true, issue: local, source: "local" };
 
     const system = `Bạn là giảng viên Conceptual Framework 2018, Chương 2.
-Soạn MỘT issue luyện tập hoàn toàn bằng tiếng Việt, dịch sát nghĩa thuật ngữ kế toán (giữ tiếng Anh trong ngoặc: carrying amount, legal title, authorised for issue, arm's length, going concern).
+Soạn MỘT issue luyện tập hoàn toàn bằng tiếng Việt. Văn phong phải tự nhiên như đề thi được biên soạn trực tiếp bằng tiếng Việt, KHÔNG có cảm giác dịch máy. Giữ tiếng Anh trong ngoặc cho thuật ngữ kế toán quan trọng (carrying amount, legal title, authorised for issue, arm's length, going concern).
 Trả JSON thuần, không markdown:
 {"title":"...","company":"...","difficulty":"Khó","primary":"...","cf":"...","distractors":["...","...","...","..."],"keywords":["..."],"scenario":"...","model":"..."}
 Quy tắc BẮT BUỘC:
-- scenario 350–500 từ, MỘT đoạn dày (không gạch đầu dòng), dài tương đương đề thi: số liệu (triệu CU, ngày, %), công ty hư cấu, email nội bộ, giao dịch phụ khác bản chất, biên bản ủy ban kiểm toán.
-- TRÊN ĐỀ (title + scenario) CẤM viết tên bất kỳ đặc tính định tính nào (không Relevance, Materiality, Faithful representation, Completeness, Neutrality, Comparability, Verifiability, Timeliness, Understandability, Cost constraint, Prudence, không “đặc tính quyết định”). Chỉ bối cảnh kinh tế, số liệu, lập luận ban quản trị bằng lý do kinh doanh (covenant, thưởng, guidance, hình thức pháp lý).
+- scenario 350–500 từ, vẫn phải NHIỄU và khó về mặt suy luận. Nhiễu đến từ dữ kiện, email, động cơ management, giao dịch phụ, lập luận sai và các đặc tính khác có vẻ liên quan — KHÔNG được làm khó bằng câu tiếng Việt lủng củng.
+- Viết scenario thành 8–14 câu có cấu trúc rõ: (1) bối cảnh và ngày báo cáo; (2) giao dịch/sự kiện chính; (3) cách management xử lý; (4) 3–5 lập luận gây nhiễu; (5) 1–2 chi tiết phụ khác bản chất; (6) email/biên bản làm lộ động cơ nếu phù hợp. Có thể dùng nhiều câu trong cùng một đoạn, nhưng mỗi câu nên có một ý chính.
+- Ưu tiên câu chủ động, chủ ngữ rõ ràng. Tránh câu quá dài có hơn 3 mệnh đề. Khi chuyển sang ý mới, hãy bắt đầu câu mới thay vì nối liên tục bằng “và”, “còn”, “vì vậy”.
+- KHÔNG dùng các cụm dịch máy/lủng củng như “mút trên/mút dưới”, “đẩy provision”, “book số”, “user rối”, “ship”, “guidance” nếu có thể viết tự nhiên bằng tiếng Việt. Dùng “mức cao nhất/mức thấp nhất”, “ghi nhận khoản dự phòng”, “người sử dụng”, “phát hành”, “mục tiêu lợi nhuận”.
+- Trên đề (title + scenario) CẤM viết tên bất kỳ đặc tính định tính nào: không Relevance, Materiality, Faithful representation, Completeness, Neutrality, Comparability, Verifiability, Timeliness, Understandability, Cost constraint, Prudence, không “đặc tính quyết định”. Chỉ đưa bối cảnh, số liệu và lập luận kinh doanh của management.
 - primary và distractors nằm NGOÀI đề, dùng để chấm; primary đúng đặc tính được giao.
-- đúng 4 distractors plausibly gần nhưng không đúng.
-- đáp án mẫu 90–160 từ: nêu QC quyết định, neo đoạn CF và IFRS 18, chỉ ra nhiễu, khuyến nghị ghi nhận/thuyết minh.
+- Đúng 4 distractors plausibly gần nhưng không đúng.
+- Email nội bộ có thể ngắn, tự nhiên, giống email thật; không biến thành khẩu hiệu.
+- Đáp án mẫu 90–160 từ: nêu QC quyết định, neo đoạn CF và IFRS liên quan, chỉ ra nhiễu, kết luận xử lý ghi nhận/thuyết minh.
 - Không trùng tiêu đề đã có.`;
 
     const user = `Đặc tính quyết định BẮT BUỘC: ${qc.label}
@@ -109,7 +113,7 @@ cf: ${qc.cf}
 Gợi ý học thuật: ${qc.hint}
 Mã đề: ${data.id}
 Tiêu đề cần tránh: ${data.existingTitles.slice(0, 40).join(" | ") || "(không)"}
-Viết tình huống MỚI, khác hẳn các đề luyện sẵn. Đoạn DÀI như đề thi (350–500 từ). CẤM ghi tên đặc tính trên đề — chỉ bối cảnh, số, email, giao dịch phụ. Dịch sát nghĩa, giữ số/ngày/trích dẫn.`;
+Viết tình huống MỚI, khác hẳn các đề luyện sẵn. Giữ độ nhiễu cao nhưng ưu tiên khả năng đọc hiểu. Đề phải có tình huống kinh tế rõ ràng, câu văn tự nhiên, các lập luận sai được tách thành câu riêng. CẤM ghi tên đặc tính trên đề.`;
 
     try {
       const res = await fetch("https://api.x.ai/v1/chat/completions", {

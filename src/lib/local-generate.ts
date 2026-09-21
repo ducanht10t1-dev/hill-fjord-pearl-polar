@@ -252,17 +252,51 @@ function buildFor(qc: QcDef, rng: () => number): Built {
       };
     }
     case "trade-off": {
-      const mid = amt(rng, 50, 140);
-      const low = Math.round(mid * 0.2);
-      const high = Math.round(mid * 2.4);
+      const variant = Math.floor(rng() * 5);
+      const amount = amt(rng, 40, 160);
+      const rangeLow = Math.round(amount * 0.35);
+      const rangeHigh = Math.round(amount * 2.2);
+      const pairs = [
+        {
+          title: `${company}: thông tin kịp thời nhưng chưa đủ trung thực`,
+          primary: "Đánh đổi Thích hợp và Trình bày trung thực (Relevance vs Faithful representation)",
+          scenario: `${company} nhận được một báo cáo định giá tài sản công nghệ trị giá khoảng ${amount} triệu CU vào ngày 20 tháng 12 năm ${y1}. Báo cáo được lập rất nhanh để kịp cuộc họp hội đồng ngày 28 tháng 12, nhưng chuyên gia cảnh báo rằng khoảng giá trị hợp lý thực tế nằm từ ${rangeLow} đến ${rangeHigh} triệu CU vì dữ liệu thị trường hạn chế. CFO muốn ghi nhận đúng mức ${amount} triệu CU vào báo cáo năm ${y1}, vì đây là con số mới nhất và có khả năng ảnh hưởng đáng kể đến quyết định của nhà đầu tư. Kiểm toán viên cho rằng một con số duy nhất tạo cảm giác chắc chắn quá mức. Ban quản trị phản bác rằng nếu chờ thêm hai tuần để hoàn thiện mô hình thì báo cáo sẽ bị trễ. Tờ trình cũng viện dẫn rằng các đối thủ đều công bố một con số duy nhất và rằng thuyết minh cả khoảng sẽ khiến người sử dụng khó hiểu. Một giao dịch khác trị giá 1 triệu CU đã có giá thị trường quan sát được nên không có cùng mức độ bất định. Email CFO ngày 27 tháng 12 viết: “Cần số mới nhất cho cuộc họp. Đừng để khoảng định giá làm mất tác dụng của thông tin.”`,
+          model: `Case này là trade-off giữa Relevance và Faithful representation — ${qc.cf}. Con số mới có relevance cao, nhưng mức độ uncertainty khiến việc trình bày một điểm ${amount} triệu CU như thể chắc chắn có thể không faithful. Không nhất thiết phải chọn “cũ” hoặc “mới” một cách máy móc: có thể cung cấp ước tính tốt nhất kèm phương pháp, khoảng và độ bất định. Timeliness và Understandability là đặc tính hỗ trợ, không tự động cho phép bỏ qua uncertainty.`
+        },
+        {
+          title: `${company}: thuyết minh đầy đủ nhưng báo cáo bị trì hoãn`,
+          primary: "Đánh đổi Đầy đủ, Dễ hiểu và Kịp thời (Completeness vs Understandability vs Timeliness)",
+          scenario: `${company} phát hiện một hợp đồng dài hạn có nhiều điều khoản biến đổi ngay trước ngày phát hành báo cáo ${y1}. Nhóm kế toán đã có thể mô tả các điều khoản chính trong khoảng 6 trang, nhưng muốn mở rộng thành 20 trang với toàn bộ kịch bản dòng tiền từ ${rangeLow} đến ${rangeHigh} triệu CU. Việc mở rộng sẽ làm ngày phát hành lùi từ ngày 20 tháng 3 sang giữa tháng 4. CFO lập luận rằng thông tin càng nhiều càng đầy đủ, nên nên đưa toàn bộ bảng tính vào báo cáo. Ủy ban kiểm toán lo ngại rằng quá nhiều chi tiết sẽ che khuất những thông tin quan trọng đối với người sử dụng. Một thành viên khác muốn cắt toàn bộ phần nhạy cảm để báo cáo ngắn và phát hành đúng hạn. Một khoản vay ngân hàng ${amount} triệu CU có covenant dựa trên dòng tiền của hợp đồng này. Ban quản trị cũng chỉ ra rằng đối thủ chỉ dành hai trang cho các hợp đồng tương tự. Tuy nhiên, nhiều điều khoản trong hợp đồng của ${company} khác đáng kể so với đối thủ. Email ngày 12 tháng 3 ghi: “Chúng ta cần vừa đủ thông tin để người sử dụng hiểu rủi ro, nhưng không biến báo cáo thành một tập dữ liệu thô.”`,
+          model: `Đây là trade-off giữa Completeness, Understandability và Timeliness. Completeness không có nghĩa đưa mọi dữ liệu thô; phải cung cấp các thông tin cần thiết để hiểu hiện tượng. Understandability yêu cầu phân loại và trình bày súc tích, còn Timeliness yêu cầu thông tin đến tay user khi vẫn hữu ích. Giải pháp không phải hy sinh hoàn toàn một đặc tính: chọn lọc thông tin trọng yếu, trình bày cấu trúc rõ và loại bỏ chi tiết không cần thiết để vừa đầy đủ vừa dễ hiểu mà không trì hoãn không cần thiết.`
+        },
+        {
+          title: `${company}: số liệu giống đối thủ nhưng sai bản chất`,
+          primary: "Đánh đổi Trình bày trung thực và Có thể so sánh (Faithful representation vs Comparability)",
+          scenario: `${company} ghi nhận doanh thu từ một hợp đồng phân phối đặc biệt trị giá ${amount} triệu CU. Hợp đồng của công ty chuyển quyền kiểm soát cho khách hàng khi hàng được giao tại kho, trong khi hai đối thủ lớn ghi nhận khi hàng rời nhà máy vì điều khoản của họ khác. CFO muốn áp dụng cùng mốc với đối thủ để các báo cáo doanh thu dễ so sánh. Nếu làm vậy, ${company} sẽ ghi nhận thêm ${Math.round(amount * 0.18)} triệu CU trước ngày khóa sổ. Bộ phận pháp chế xác nhận quyền trả lại vẫn tồn tại cho đến khi khách hàng kiểm tra hàng. Kiểm toán viên cảnh báo rằng việc bắt chước đối thủ sẽ làm sai bản chất giao dịch. CFO phản hồi rằng nhà đầu tư thường so sánh tăng trưởng doanh thu giữa ba công ty và việc sử dụng chính sách khác sẽ khiến ${company} trông kém hơn. Một hợp đồng nhỏ trị giá 2 triệu CU thực sự có điều khoản giống đối thủ và đã được ghi nhận theo cùng mốc. Ban quản trị dùng giao dịch nhỏ này như bằng chứng rằng “nhất quán với ngành” là hợp lý. Email thương mại ngày 29 tháng 12 viết: “Nếu muốn giữ vị trí trên bảng so sánh, doanh thu phải nằm cùng kỳ với đối thủ.”`,
+          model: `Trade-off nằm giữa Faithful representation và Comparability. Comparability giúp người sử dụng nhận ra điểm giống và khác, nhưng không cho phép công ty dùng cùng chính sách khi hiện tượng kinh tế khác nhau. Phải ghi nhận doanh thu theo điều khoản thực tế của hợp đồng. Sau đó có thể giải thích sự khác biệt chính sách hoặc thời điểm chuyển giao để người sử dụng so sánh được. “Giống đối thủ” không phải lý do để mô tả sai hiện tượng.`
+        },
+        {
+          title: `${company}: kiểm chứng nhiều hơn nhưng thông tin mất giá trị`,
+          primary: "Đánh đổi Có thể kiểm chứng và Kịp thời (Verifiability vs Timeliness)",
+          scenario: `${company} sở hữu một khoản đầu tư chưa niêm yết trị giá khoảng ${amount} triệu CU. Tại ngày 31 tháng 12 năm ${y1}, công ty có một mô hình định giá do bộ phận tài chính lập, dựa trên dữ liệu thị trường gần nhất. Mô hình cho khoảng giá trị từ ${rangeLow} đến ${rangeHigh} triệu CU. CFO muốn dùng ngay mức giữa khoảng để hoàn tất báo cáo đúng hạn. Ủy ban kiểm toán yêu cầu thuê thêm hai chuyên gia độc lập để kiểm tra toàn bộ giả định, nhưng việc này có thể kéo dài quá ngày phát hành dự kiến. Một chuyên gia sơ bộ đã xác nhận các phép tính cơ bản nhưng chưa xác nhận các giả định về tăng trưởng. CFO cho rằng chờ xác minh đầy đủ sẽ làm thông tin mất tính hữu ích, trong khi ủy ban kiểm toán lo ngại rằng phát hành ngay sẽ khiến con số khó kiểm chứng. Một khoản đầu tư niêm yết khác 8 triệu CU có giá đóng cửa quan sát được và không gặp vấn đề này. Ban quản trị cũng nhắc rằng ngân hàng sẽ xem báo cáo trước khi gia hạn khoản vay. Email ngày 3 tháng 1 viết: “Nếu chưa thể xác minh mọi giả định, ít nhất hãy công bố phương pháp và khoảng thay vì giả vờ rằng con số giữa là chắc chắn.”`,
+          model: `Trade-off ở đây là Verifiability và Timeliness. Có thể kiểm chứng không yêu cầu mọi ước tính phải có một con số tuyệt đối chắc chắn; với ước tính, công bố phương pháp, dữ liệu và khoảng bất định có thể hỗ trợ verification. Timeliness cũng không đồng nghĩa phải phát hành một con số tùy ý. Cách xử lý cân bằng là dùng bằng chứng sẵn có, mô tả uncertainty và tránh tạo mức độ chắc chắn giả tạo.`
+        },
+        {
+          title: `${company}: chi phí thuyết minh và thông tin cần thiết`,
+          primary: "Đánh đổi Chi phí và Đầy đủ (Cost constraint vs Completeness)",
+          scenario: `${company} có một nghĩa vụ môi trường dự kiến ${amount} triệu CU. Để trình bày đầy đủ, nhóm kế toán muốn thuê chuyên gia lập mô hình chi tiết cho 12 kịch bản địa chất, với chi phí ${Math.max(1, Math.round(amount * 0.02))} triệu CU và thời gian khoảng sáu tuần. Ban quản trị cho rằng chi phí này quá cao so với lợi ích và đề xuất chỉ công bố một ước tính tổng cùng một câu “số liệu có thể thay đổi”. Kiểm toán viên phát hiện ba kịch bản có thể làm nghĩa vụ tăng lên ${rangeHigh} triệu CU và có thể ảnh hưởng đến covenant. CFO phản biện rằng người sử dụng không cần biết từng kịch bản, còn việc thu thập dữ liệu sẽ trì hoãn phát hành. Một khoản nghĩa vụ môi trường khác chỉ 0,5 triệu CU đã được phân tích rất chi tiết vì dữ liệu sẵn có. Ban quản trị dùng khoản nhỏ đó để chứng minh rằng chính sách thuyết minh hiện tại đã nhất quán. Ủy ban kiểm toán yêu cầu ít nhất phải mô tả các yếu tố có khả năng làm thay đổi đáng kể ước tính. Email ngày 18 tháng 12 viết: “Không phải mọi dữ liệu đều đáng chi tiền, nhưng không thể dùng cost constraint như giấy miễn trừ cho thông tin quan trọng.”`,
+          model: `Đây là trade-off giữa Cost constraint và Completeness. Chi phí là yếu tố cần cân nhắc, nhưng không phải do từng doanh nghiệp tự đặt ra một mức miễn trừ khỏi IFRS. Cần cung cấp những thông tin cần thiết để người sử dụng hiểu mức độ và uncertainty của nghĩa vụ; không nhất thiết phải công bố mọi dữ liệu thô của 12 kịch bản. Có thể chọn các giả định và độ nhạy quan trọng nhất, từ đó cân bằng chi phí với lợi ích thông tin.`
+        }
+      ];
+      const chosen = pairs[variant]!;
       return {
-        title: `${company}: nền tảng tự viết ghi nhận ở điểm giữa khoảng rộng`,
+        title: chosen.title,
         company,
         difficulty: "Rất khó",
-        primary: "Đánh đổi thích hợp và trình bày trung thực",
-        keywords: ["đánh đổi", "trade-off", "uncertainty", "nền tảng", "không ghi nhận", "2.22"],
-        scenario: `${company} tự phát triển nền tảng điều hành hơn bảy năm. Năm ${y1} giám đốc tài chính muốn người sử dụng thấy “tài sản thật” và ghi nhận tài sản vô hình nội bộ ${mid} triệu CU, đối ứng lãi. ${mid} là điểm giữa khoảng ${low}–${high} triệu CU của tư vấn, phụ thuộc giữ chân khách và tỷ lệ gia hạn. Không có thị trường hoạt động. IAS 38 hạn chế ghi nhận chi phí nội bộ giai đoạn nghiên cứu. Giám đốc tài chính nói Khung khái niệm ưu tiên thông tin thích hợp nhất nên override chuẩn mực. Không mô tả khoảng hay quy trình.${trap(rng, "Chỉ thích hợp (Relevance) — user muốn thấy platform", "Thận trọng (Prudence) theo một thành viên hội đồng muốn không ghi gì cả", `một nhãn hàng mua lại năm ${y0} giá gốc 12 triệu CU đang khấu hao đúng IAS 38; ban quản trị muốn “đồng bộ” bằng cách đánh giá lại nhãn đó lên ${Math.round(mid * 0.2)} triệu CU;`, "Framework thắng IAS 38. Book midpoint.")}`,
-        model: `Đặc tính quyết định: Relevance và Faithful representation áp dụng đồng thời — ${qc.cf}. Thông tin về nền tảng thích hợp nhưng measurement uncertainty quá cao nên không sufficiently faithful. Framework không override IAS 38. Kênh đúng: thuyết minh giả định và khoảng, không đưa ${mid} triệu CU vào lãi lỗ.`,
+        primary: chosen.primary,
+        keywords: ["trade-off", "đánh đổi", "Relevance", "Faithful representation", "Completeness", "Understandability", "Timeliness", "Comparability", "Verifiability", "Cost constraint"],
+        scenario: chosen.scenario + trap(rng, "đặc tính này quan trọng hơn nên có thể bỏ qua đặc tính còn lại", "người sử dụng cần một con số đơn giản để ra quyết định", "một khoản mục nhỏ khác đã được xử lý theo cách đơn giản hơn", "Ưu tiên một đặc tính và bỏ qua phần còn lại để báo cáo gọn."),
+        model: chosen.model
       };
     }
     case "hierarchy": {
